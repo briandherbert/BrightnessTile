@@ -7,9 +7,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_brightness_full_24dp"
+        android:icon="@mipmap/ic_launcher_brightness"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_brightness_full_24dp"
+        android:roundIcon="@mipmap/ic_launcher_brightness_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
