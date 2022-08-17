@@ -14,13 +14,12 @@ import android.widget.SeekBar
 import android.widget.TextView
 
 class PermissionActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
-    private val TAG = "PermissionActivity"
-
     var brightness = 255
     var REQ_CODE = 1
     var VERBOSE = true
 
     lateinit var SHARED_PREFS : SharedPreferences;
+    var MAX_BRIGHTNESS = 255
 
     lateinit var lblDimness : TextView;
 
@@ -34,8 +33,6 @@ class PermissionActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener 
         bar.setOnSeekBarChangeListener(this)
 
         var curBrightness = android.provider.Settings.System.getInt(contentResolver, android.provider.Settings.System.SCREEN_BRIGHTNESS)
-        var seekVal = curBrightness.toDouble() / 255.0 * 100
-        bar.setProgress(seekVal.toInt())
 
         BrightService.log("starting, curr brightness is " + curBrightness.toString())
 
@@ -44,6 +41,11 @@ class PermissionActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener 
         lblDimness = findViewById(R.id.lbl_dimness)
 
         SHARED_PREFS = getSharedPreferences(packageName, Context.MODE_PRIVATE);
+        MAX_BRIGHTNESS = BrightService.getMaxBrightness(SHARED_PREFS)
+        BrightService.log("Max brightness is " + MAX_BRIGHTNESS)
+
+        var seekVal = curBrightness.toDouble() / MAX_BRIGHTNESS.toDouble() * 100
+        bar.setProgress(seekVal.toInt())
     }
 
     fun saveBrightness() {
@@ -85,7 +87,7 @@ class PermissionActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener 
 
     override fun onProgressChanged(p0: SeekBar?, progress: Int, fromUser: Boolean) {
         if (fromUser) {
-            brightness = (progress.toDouble() * 2.55).toInt()
+            brightness = (progress.toDouble() * (MAX_BRIGHTNESS.toDouble() / 100.0)).toInt()
             Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
             lblDimness.text = "Set dimness to " + brightness
         }
